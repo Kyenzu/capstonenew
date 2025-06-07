@@ -34,8 +34,8 @@ $password = password_hash($data->password, PASSWORD_BCRYPT);
 
 // Prepare SQL statement
 $stmt = $conn->prepare("INSERT INTO users 
-    (first_name, last_name, username, email, phone, dob, age, gender, status, province, city, barangay, password) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    (first_name, last_name, username, email, phone, dob, age, gender, status, province, city, barangay, password, is_verified) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 // Check if prepare worked
 if (!$stmt) {
@@ -43,10 +43,13 @@ if (!$stmt) {
     exit();
 }
 
+// Set is_verified to 0 for new users
+$is_verified = 0;
+
 // Bind parameters
 // Types: s = string, i = integer
 $stmt->bind_param(
-    "ssssssissssss",
+    "ssssssissssssi",
     $firstName,
     $lastName,
     $username,
@@ -59,7 +62,8 @@ $stmt->bind_param(
     $province,
     $city,
     $barangay,
-    $password
+    $password,
+    $is_verified
 );
 
 // Execute statement

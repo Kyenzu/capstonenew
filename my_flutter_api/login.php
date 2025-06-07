@@ -18,14 +18,19 @@ $data = json_decode(file_get_contents("php://input"));
 $username = $data->username;
 $password = $data->password;
 
-$stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+// Fetch is_verified as well
+$stmt = $conn->prepare("SELECT id, password, is_verified FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
     if (password_verify($password, $row['password'])) {
-        echo json_encode(["success" => true, "user_id" => $row['id']]);
+        echo json_encode([
+            "success" => true,
+            "user_id" => $row['id'],
+            "is_verified" => $row['is_verified']
+        ]);
     } else {
         echo json_encode(["success" => false, "message" => "Invalid password."]);
     }
