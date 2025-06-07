@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'settings_screen.dart';
-import 'message_screen.dart'; // Import the MessageScreen
+import 'message_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isVerified;
-  const HomeScreen({super.key, required this.isVerified});
+  final int userId; // <-- Add this line
+  const HomeScreen({super.key, required this.isVerified, required this.userId}); // <-- Add userId
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -52,9 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return MessageScreen(
           iconTextColor: _iconTextColor,
-          isDarkMode: _isDarkMode,
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
+          userId: widget.userId, // <-- Pass userId here
         );
       case 2:
         return Center(child: Text('Notifications', style: TextStyle(color: _iconTextColor)));

@@ -18,12 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     final result = await loginUser(usernameController.text, passwordController.text);
     if (result['success']) {
-      // Pass is_verified from the backend to HomeScreen
+      // Pass is_verified and user_id from the backend to HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => HomeScreen(
-            isVerified: result['is_verified'] == 1, // or == '1' if it's a string
+            isVerified: result['is_verified'] == 1 || result['is_verified'] == '1',
+            userId: result['user_id'], // <-- Pass userId here
           ),
         ),
       );
