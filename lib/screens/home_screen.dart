@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'settings_screen.dart';
+import 'message_screen.dart'; // Import the MessageScreen
 import 'package:image_picker/image_picker.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -49,7 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return Center(child: Text('Welcome to Home Screen!', style: TextStyle(color: _iconTextColor)));
       case 1:
-        return Center(child: Text('Messages', style: TextStyle(color: _iconTextColor)));
+        return MessageScreen(
+          iconTextColor: _iconTextColor,
+          isDarkMode: _isDarkMode,
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
+        );
       case 2:
         return Center(child: Text('Notifications', style: TextStyle(color: _iconTextColor)));
       case 3:
