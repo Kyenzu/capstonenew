@@ -46,7 +46,7 @@ class _MessageScreenState extends State<MessageScreen> {
               "Date of Birth: ${data['dob'] ?? ''}\n"
               "Age: ${data['age'] ?? ''}\n"
               "Gender: ${data['gender'] ?? ''}\n"
-              "Verified: ${data['is_verified'] == '1' ? 'Yes' : 'No'}\n"
+              "Verified: ${data['is_verified'] == 1 || data['is_verified'] == '1' ? 'Yes' : 'No'}\n"
               "Location: Province: ${data['province'] ?? ''}, City: ${data['city'] ?? ''}, Barangay: ${data['barangay'] ?? ''}\n";
         });
         return;
@@ -130,12 +130,18 @@ class _MessageScreenState extends State<MessageScreen> {
                   margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isUser ? Colors.blue[100] : Colors.grey[300],
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? (isUser ? Colors.teal[700] : Colors.grey[850])
+                        : (isUser ? Colors.blue[100] : Colors.grey[300]),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     msg['content'] ?? '',
-                    style: TextStyle(color: widget.iconTextColor),
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    ),
                   ),
                 ),
               );
