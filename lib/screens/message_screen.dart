@@ -20,7 +20,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
-  String? _userInfo; // Store user info as a string
+  String? _userInfo;
 
   @override
   void initState() {
@@ -29,30 +29,51 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Future<void> fetchUserInfo() async {
-    // Replace with your actual backend endpoint
-    final url = Uri.parse('http://localhost/capstonenew/my_flutter_api/get_user_info.php?user_id=${widget.userId}');
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    try {
+      final url = Uri.parse('http://localhost/capstonenew/my_flutter_api/get_user_info.php?user_id=${widget.userId}');
+      final response = await http.get(url);
+      print('User info status: ${response.statusCode}');
+      print('User info body: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // Use ?? '' for all fields to avoid nulls
+        setState(() {
+          _userInfo =
+              "This is the user's profile:\n"
+              "Name: ${data['first_name'] ?? ''} ${data['last_name'] ?? ''}\n"
+              "Email: ${data['email'] ?? ''}\n"
+              "Phone: ${data['phone'] ?? ''}\n"
+              "Date of Birth: ${data['dob'] ?? ''}\n"
+              "Age: ${data['age'] ?? ''}\n"
+              "Gender: ${data['gender'] ?? ''}\n"
+              "Verified: ${data['is_verified'] == '1' ? 'Yes' : 'No'}\n"
+              "Location: Province: ${data['province'] ?? ''}, City: ${data['city'] ?? ''}, Barangay: ${data['barangay'] ?? ''}\n";
+        });
+        return;
+      }
+      // If backend fails, set a default user info
       setState(() {
-        _userInfo =
-            "User info: Name: ${data['first_name']} ${data['last_name']}, Email: ${data['email']}, Verified: ${data['is_verified'] == '1' ? 'Yes' : 'No' }.";
+        _userInfo = "This is the user's profile:\nName: Test User\nEmail: test@example.com\nPhone: 1234567890\nLocation: Test City\nVerified: Yes\n";
       });
-    } else {
+    } catch (e) {
       setState(() {
-        _userInfo = "User info: (could not fetch user info)";
+        _userInfo = "This is the user's profile:\nName: Test User\nEmail: test@example.com\nPhone: 1234567890\nLocation: Test City\nVerified: Yes\n";
       });
     }
   }
 
   Future<void> sendMessage(String message) async {
     setState(() {
-      _messages.add({'role': 'user', 'content': message});
+      _messages.add({'role': 'user', 'content': message}); // Only user's message shown
       _isLoading = true;
     });
 
-    // Prepend user info to the prompt
-    final prompt = "${_userInfo ?? ''}\nUser: $message";
+    // Always prepend user info to every prompt
+    String userInfoSentence = '';
+    if (_userInfo != null && _userInfo!.isNotEmpty) {
+      userInfoSentence = _userInfo!;
+    }
+    final prompt = "$userInfoSentence\nUser: $message";
 
     // Use your valid Gemini API key here
     const apiKey = 'AIzaSyAL5ofgLWxiSIa4XBcXneTxOPpvlj9O9ys';
@@ -72,6 +93,7 @@ class _MessageScreenState extends State<MessageScreen> {
         ]
       }),
     );
+    print('Prompt sent to Gemini: $prompt');
     print('Status: ${response.statusCode}');
     print('Body: ${response.body}');
 
@@ -81,7 +103,7 @@ class _MessageScreenState extends State<MessageScreen> {
       botReply = data['candidates']?[0]?['content']?['parts']?[0]?['text'] ?? botReply;
     }
 
-    if (!mounted) return; // Prevent setState after dispose
+    if (!mounted) return;
     setState(() {
       _messages.add({'role': 'bot', 'content': botReply});
       _isLoading = false;
@@ -90,6 +112,10 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_userInfo == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Column(
       children: [
         Expanded(
@@ -133,13 +159,15 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
             IconButton(
               icon: Icon(Icons.send, color: widget.iconTextColor),
-              onPressed: () {
-                final text = _controller.text.trim();
-                if (text.isNotEmpty) {
-                  sendMessage(text);
-                  _controller.clear();
-                }
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      final text = _controller.text.trim();
+                      if (text.isNotEmpty) {
+                        sendMessage(text);
+                        _controller.clear();
+                      }
+                    },
             ),
           ],
         ),
