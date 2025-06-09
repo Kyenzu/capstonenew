@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';       // import login screen
-// import 'screens/register_screen.dart';    // keep register screen imported for navigation
+// import login screen
+import 'screens/login_screen.dart';        // import login screen
+import 'screens/home_screen.dart';         // import home screen
 
 void main() {
   runApp(MyApp());

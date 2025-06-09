@@ -3,6 +3,8 @@ import 'login_screen.dart';
 import 'settings_screen.dart';
 import 'message_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'home_map_screen.dart';
+import 'emergency_hotlines_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isVerified;
@@ -49,7 +51,44 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     switch (_selectedIndex) {
       case 0:
-        return Center(child: Text('Welcome to Home Screen!', style: TextStyle(color: _iconTextColor)));
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Welcome to Home Screen!', style: TextStyle(color: _iconTextColor)),
+              SizedBox(height: 24),
+              ElevatedButton.icon(
+                icon: Icon(Icons.map, color: _iconTextColor),
+                label: Text('Open Map', style: TextStyle(color: _iconTextColor)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                  foregroundColor: _iconTextColor,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeMapScreen()),
+                  );
+                },
+              ),
+              SizedBox(height: 12),
+              ElevatedButton.icon(
+                icon: Icon(Icons.phone_in_talk, color: _iconTextColor),
+                label: Text('Emergency Hotlines', style: TextStyle(color: _iconTextColor)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isDarkMode ? Colors.red[900] : Colors.red[100],
+                  foregroundColor: _iconTextColor,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EmergencyHotlinesScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
       case 1:
         return MessageScreen(
           iconTextColor: _iconTextColor,
@@ -157,6 +196,21 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: _isDarkMode ? Colors.grey[800] : Colors.grey[200],
               foregroundColor: _iconTextColor,
             ),
+          ),
+          SizedBox(height: 12),
+          ElevatedButton.icon(
+            icon: Icon(Icons.phone_in_talk, color: _iconTextColor),
+            label: Text('Emergency Hotlines', style: TextStyle(color: _iconTextColor)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _isDarkMode ? Colors.red[900] : Colors.red[100],
+              foregroundColor: _iconTextColor,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EmergencyHotlinesScreen()),
+              );
+            },
           ),
           SizedBox(height: 24),
           ElevatedButton(
